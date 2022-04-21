@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{{ recipe.title }} | Recipes</title>
+    </head>
+    <body>
+        <p><a href='/recipes'>Back to all recipes</a></p>
+        <h1>{{ recipe.title }}</h1>
+        <h4>{{ recipe.blurb }}</h4>
+        <p>Author: {{ recipe.author }} | Yield: {{ recipe.portion_yield }} serving{{ recipe.portion_yield|pluralize }}</p>
+        <p>Created: {{ recipe.creation_stamp }} | Updated: {{ recipe.update_stamp }}</p>
+        <h2>Ingredients</h2>
+        <p>{{ recipe.ingredients }}</p>
+        <h2>Steps</h2>
+        <p>{{ recipe.steps }}</p>
+    </body>
+</html>

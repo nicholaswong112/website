@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Recipes</title>
+    </head>
+    <body>
+        {% if recipes %}
+            <h2>Recipes</h2>
+            <ul>
+                {% for title, blurb, slug in recipes %}
+                    <li><a href="{% url 'recipes:detail' slug %}">{{ title }}</a>: {{ blurb }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No recipes, sadd</p>
+        {% endif %}
+</body>
+</html>
