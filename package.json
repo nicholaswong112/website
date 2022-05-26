@@ -1,7 +1,6 @@
 {
   "name": "website",
   "version": "0.0.1",
-  "main": "index.js",
   "repository": "https://github.com/nicholaswong112/website",
   "author": "dachosenwong",
   "license": "MIT"
