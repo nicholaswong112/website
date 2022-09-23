@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Me{% endblock %}
+
+{% block head %}
+    <meta name="description" content="About page for Nick Wong"/>
+    <link rel="stylesheet" href="{% static 'bio/about.css' %}"/>
+
+{% endblock %}
+
+{% block content %}
+    <h1>About Me</h1>
+    <h2>Oversimplying Few Sentences</h2>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus provident impedit ipsa quaerat quidem rerum fugiat nemo unde suscipit incidunt sequi nulla accusamus, quod eos, reiciendis dicta ducimus rem cupiditate.</p>
+    <h2>Things I Care About</h2>
+    <ul>
+        <li>Climate Change</li>
+        <li>Sustainability</li>
+        <li>Christianity and Spiritual Matters</li>
+        <li>Poverty</li>
+        <li>Homelessness</li>
+        <li>Global Suffering and Inequality</li>
+    </ul>
+    <h2>Things I Enjoy</h2>
+    <ul>
+        <li>Sports</li>
+        <li>Music</li>
+        <li>Cooking</li>
+        <li>Podcasts</li>
+        <li>Books</li>
+    </ul>
+    <h2>Projects</h2>
+    <ul>
+        <li>This website</li>
+    </ul>
+    <h2>Work Experience</h2>
+    <ul>
+        <li>JS</li>
+        <li>JS intern</li>
+        <li>IBM intern</li>
+    </ul>
+    <h2>Social Links</h2>
+    <ul>
+        <li>fb</li>
+        <li>ig</li>
+        <li>linkedin</li>
+    </ul>
+{% endblock %}

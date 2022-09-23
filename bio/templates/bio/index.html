@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block head %}
+    <meta name="description" content="Personal website of Nick Wong"/>
+    <link rel="stylesheet" href="{% static 'bio/index.css' %}"/>
+{% endblock %}
+
+{% block content %}
+    <div class="greeting">
+        <h1>Hello! 👋</h1>
+        <p>I hope you're having a good day 😊</p>
+    </div>
+    <div class="photo">
+        <img src="{% static 'mikey-sm.jpg' %}"
+            srcset="{% static 'mikey-sm.jpg' %} 300w,
+                    {% static 'mikey-lg.jpg' %} 600w"
+            sizes="(min-width: 960px) 480px,
+                    50vw"
+            alt="Adorable doggo"/>
+    </div>
+{% endblock %}
