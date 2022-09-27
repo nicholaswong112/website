@@ -1,0 +1,20 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.section {
+    font-family: sans-serif;
+    font-size: 20px;
+    
+    padding: 20px;
+    outline: 1px solid black;
+}
+
+.section > ul {
+    list-style-position: inside;
+    list-style-type: circle;
+}

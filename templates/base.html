@@ -1,29 +1,53 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link rel="stylesheet" href="{% static 'base.css' %}"/>
-        <title>{% block title %}TODO{% endblock %} | Nick Wong</title>
-        {% block head %}
-            <meta name="description" content="TODO"/>
-        {% endblock %}
-    </head>
-    <body>
-        <header>
-            <h1>Nick Wong</h1>
-            <nav>
-                <ul class="menu">
-                    <li><a href="{% url 'index' %}">Home</a></li>
-                    <li><a href="{% url 'about' %}">About</a></li>
-                    <li><a href="#">More to come!</a></li>
-                    <!-- More to come! -->
-                </ul>
-            </nav>
-        </header>
-        <div class="content">
-            {% block content %}{% endblock %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css"
+      integrity="sha512-HqxHUkJM0SYcbvxUw5P60SzdOTy/QVwA1JJrvaXJv4q7lmbDZCmZaqz01UPOaQveoxfYRv1tHozWGPMcuTBuvQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <title>{% block title %}TODO{% endblock %} | Nick Wong</title>
+    {% block head %}
+    <meta name="description" content="TODO" />
+    {% endblock %}
+  </head>
+  <body class="has-navbar-fixed-top">
+    <header>
+      <nav class="navbar is-fixed-top has-background-light">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="{% url 'index' %}">
+            <img src="{% static 'logo-black.png' %}" />
+          </a>
+          <a class="navbar-burger" data-target="navbarOptions">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
         </div>
-    </body>
+        <div class="navbar-menu" id="navbarOptions">
+          <div class="navbar-end">
+            <a class="navbar-item is-tab" href="{% url 'index' %}">Home</a>
+            <a class="navbar-item is-tab" href="{% url 'about' %}">About</a>
+            <a class="navbar-item is-tab" href="#">More to come!</a>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div class="content">{% block content %}{% endblock %}</div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".navbar-burger").click(function () {
+          $(".navbar-burger").toggleClass("is-active");
+          $(".navbar-menu").toggleClass("is-active");
+          $(".navbar-item").each
+        });
+      });
+    </script>
+  </body>
 </html>

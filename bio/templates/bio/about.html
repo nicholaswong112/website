@@ -1,49 +1,58 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'base.html' %} 
+{% load static %} 
 
-{% block title %}About Me{% endblock %}
+{% block title %}About Me{% endblock %} 
 
 {% block head %}
-    <meta name="description" content="About page for Nick Wong"/>
-    <link rel="stylesheet" href="{% static 'bio/about.css' %}"/>
-
-{% endblock %}
+<meta name="description" content="About page for Nick Wong"/>
+<link rel="stylesheet" href="{% static 'bio/about.css' %}"/>
+{% endblock %} 
 
 {% block content %}
+<div class="section bio">
     <h1>About Me</h1>
-    <h2>Oversimplying Few Sentences</h2>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus provident impedit ipsa quaerat quidem rerum fugiat nemo unde suscipit incidunt sequi nulla accusamus, quod eos, reiciendis dicta ducimus rem cupiditate.</p>
-    <h2>Things I Care About</h2>
+    <p>
+        I'm a software engineer currently living in Austin, TX (born and raised!) I
+        am the son of immigrants, who both worked hard to afford me the life and
+        education I've been given. What else... ISFJ and 6w5 I guess (lol). Thanks for checking out my
+        website! Visit my <a href="#">blog</a> to learn more about who I am and what
+        I'm thinking.
+    </p>
+</div>
+<div class="section interests">
+    <h3>Things I Care About</h2>
     <ul>
-        <li>Climate Change</li>
-        <li>Sustainability</li>
+        <li>Climate Change and Sustainability</li>
         <li>Christianity and Spiritual Matters</li>
         <li>Poverty</li>
         <li>Homelessness</li>
-        <li>Global Suffering and Inequality</li>
+        <li>Global Inequality</li>
     </ul>
-    <h2>Things I Enjoy</h2>
+</div>
+<div class="section hobbies">
+    <h3>Things I Enjoy</h2>
     <ul>
-        <li>Sports</li>
-        <li>Music</li>
-        <li>Cooking</li>
-        <li>Podcasts</li>
-        <li>Books</li>
+        <li>Sports! Current favs are spikeball and basketball. Trying to get into swimming</li>
+        <li>Music! Some artists I enjoy: Luke Chiang, CityAlight, NF, Tim Be Told, Lin-Manuel Miranda, Shane & Shane, Voiceplay, All Sons & Daughters, Tobe Nwigwe</li>
+        <li>Cooking! Big fan of low-effort, tasty, healthy, home-cooked meals. Been entertaining flexitarianism on-and-off.</li>
+        <li>Podcasts! Listening to BibleProject, Almost Heretical, and Global News Podcast</li>
+        <li>Books! Mix of fiction, spiritual, and learning about the world</li>
     </ul>
-    <h2>Projects</h2>
+</div>
+<div class="section projects">
+    <h3>Things I've worked on</h2>
     <ul>
         <li>This website</li>
+        <li>Re:Sound A Cappella https://www.youtube.com/channel/UCVlWVtLWJfl-tYTRrnlg1IQ </li>
     </ul>
-    <h2>Work Experience</h2>
+</div>
+<div class="section socials">
+    <h3>Social Links</h2>
     <ul>
-        <li>JS</li>
-        <li>JS intern</li>
-        <li>IBM intern</li>
+        <li>fb https://www.facebook.com/dachosenwong/</li>
+        <li>ig https://www.instagram.com/dachosenwong/</li>
+        <li>linkedin https://www.linkedin.com/in/nicholaswong112/</li>
+        <li>github https://github.com/nicholaswong112</li>
     </ul>
-    <h2>Social Links</h2>
-    <ul>
-        <li>fb</li>
-        <li>ig</li>
-        <li>linkedin</li>
-    </ul>
+</div>
 {% endblock %}
