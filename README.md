@@ -3,9 +3,11 @@ My personal website, find it at TODO
 
 ### Technologies:
 - Django
+- Bulma
 
 ### Helpful resources used:
-- official [Django docs](https://docs.djangoproject.com)
+- [Django docs](https://docs.djangoproject.com)
+- [Bulma docs](https://bulma.io/documentation/)
 - InternetingIsHard.com's [HTML/CSS tutorial](https://www.internetingishard.com/html-and-css/)
 
 ### Project Structure

@@ -11,6 +11,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <script src="https://kit.fontawesome.com/b125db7b60.js" crossorigin="anonymous"></script>
     <title>{% block title %}TODO{% endblock %} | Nick Wong</title>
     {% block head %}
     <meta name="description" content="TODO" />
@@ -39,6 +40,22 @@
       </nav>
     </header>
     <div class="content">{% block content %}{% endblock %}</div>
+    <footer class="footer">
+      <div class="socials">
+        <a class="icon has-text-black" href="https://www.facebook.com/dachosenwong/">
+          <i class="fa-brands fa-facebook"></i>
+        </a>
+        <a class="icon has-text-black" href="https://www.instagram.com/dachosenwong/">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+        <a class="icon has-text-black" href="https://www.linkedin.com/in/nicholaswong112/">
+          <i class="fa-brands fa-linkedin"></i>
+        </a>
+        <a class="icon has-text-black" href="https://github.com/nicholaswong112/">
+          <i class="fa-brands fa-github"></i>
+        </a>
+      </div>
+    </footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script>
       $(document).ready(function () {
