@@ -5,5 +5,7 @@ services:
     buildCommand: "./build.sh"
     startCommand: "gunicorn website.wsgi:application"
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.6
       - key: SECRET_KEY
         generateValue: true
