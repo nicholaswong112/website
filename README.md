@@ -8,10 +8,12 @@ My personal website, find it at https://website-31gs.onrender.com!
 ### Helpful resources used:
 - [Django docs](https://docs.djangoproject.com)
 - [Bulma docs](https://bulma.io/documentation/)
+- [Render docs](https://render.com/docs)
 - InternetingIsHard.com's [HTML/CSS tutorial](https://www.internetingishard.com/html-and-css/)
 
 ### Project Structure
 `bio/`: app handling the static 'Home' and 'About' pages
+`blog/`: app handling the blog content, WIP
 
 ### Deployment
 To run the webserver locally
