@@ -10,6 +10,31 @@
 
 {% block content %}
 
+<div class="columns">
+    <div class="column">
+        <p>SEARCH BAR</p>
+    </div>
+    <div class="column is-one-half">
+        <p>MAIN CONTENT</p>
+    </div>
+    <div class="column">
+        <p>ABOUT PANEL</p>
+    </div>
+</div>
 <h1>Blog to come...</h1>
+
+<h2>Posts</h2>
+<ul>
+    {% for post in posts %}
+    <li><a href="{% url 'post' post.slug %}">{{ post.title }}</a></li>
+    {% endfor %}
+</ul>
+
+<h2>Tags</h2>
+<ul>
+    {% for tag in tags %}
+    <li>{{ tag }}</li>
+    {% endfor %}
+</ul>
 
 {% endblock%}
