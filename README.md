@@ -4,6 +4,7 @@ My personal website, find it at https://website-31gs.onrender.com!
 ### Technologies:
 - Django
 - Bulma
+- PostgreSQL
 
 ### Helpful resources used:
 - [Django docs](https://docs.djangoproject.com)

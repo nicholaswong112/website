@@ -5,7 +5,7 @@ from .models import Post, Tag
 
 def index(request):
     posts = Post.objects.all()
-    tags = Tag.objects.all()
+    tags = list(map(lambda tag: str(tag), Tag.objects.all()))
     context = { 'posts': posts, 'tags': tags }
     return render(request, 'blog/index.html', context)
 

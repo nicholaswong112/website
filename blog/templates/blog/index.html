@@ -5,36 +5,76 @@
 
 {% block head %}
 <meta name="description" content="Nick Wong's blog"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.14.0/css/selectize.default.min.css" integrity="sha512-ogCYKYfJlA0Kc9mxdCu9hQAWv2H7RzzevoB1Ou24geX08ek6hTp+/WDLsqoi3LyMFh1vsuGukSnmszdpxi9Mhw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="{% static 'blog/index.css' %}"/>
 {% endblock %}
 
 {% block content %}
 
-<div class="columns">
-    <div class="column">
+<div class="columns is-desktop">
+    <div class="column is-three-fifths-desktop">
+        {% block center %}
+        <h1>Blog to come...</h1>
+
+        <h2>Posts</h2>
+        <ul>
+            {% for post in posts %}
+            <li><a href="{% url 'post' post.slug %}">{{ post.title }}</a></li>
+            {% endfor %}
+        </ul>
+        
+        <h2>Tags</h2>
+        <ul>
+            {% for tag in tags %}
+            <li>{{ tag }}</li>
+            {% endfor %}
+        </ul>
+        {% endblock %}
+    </div>
+    <div class="column search-bar">
+        {% block left %}
         <p>SEARCH BAR</p>
-    </div>
-    <div class="column is-one-half">
-        <p>MAIN CONTENT</p>
+        <label for="search-bar">Keywords</label>
+        <input id="search-bar" name="keywords" type="text"/>
+        <label for="tag-selector">Include these tags</label>
+        <select id="tag-selector" name="tags" multiple>
+            {% for tag in tags %}
+            <option selected value="{{ tag }}">{{ tag }}</option>
+            {% endfor %}
+        </select>
+        {% endblock %}
     </div>
     <div class="column">
-        <p>ABOUT PANEL</p>
+        {% block right %}
+        <div class="card">
+            <header class="card-header">
+                Welcome to the blog!
+            </header>
+            <div class="card-image">
+                <img src="{% static 'TODO.png' %}"/>
+            </div>
+            <div class="card-content">
+                <h4>Here's what you can expect here:</h4>
+                <ul>
+                    <li>Unpolished, incomplete thoughts: Life is confusing and I’m also a bad writer</li>
+                    <li>Reflections on what I’m reading and listening to</li>
+                    <li>Maybe other things, idk what I’m doing lol</li>
+                </ul>
+                <p>Please feel free to engagein the comments! Respectfully!</p>
+            </div>
+        </div>
+        {% endblock %}
     </div>
 </div>
-<h1>Blog to come...</h1>
-
-<h2>Posts</h2>
-<ul>
-    {% for post in posts %}
-    <li><a href="{% url 'post' post.slug %}">{{ post.title }}</a></li>
-    {% endfor %}
-</ul>
-
-<h2>Tags</h2>
-<ul>
-    {% for tag in tags %}
-    <li>{{ tag }}</li>
-    {% endfor %}
-</ul>
 
 {% endblock%}
+
+{% block scripts %}
+{{ block.super }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.14.0/js/selectize.min.js" integrity="sha512-VReIIr1tJEzBye8Elk8Dw/B2dAUZFRfxnV2wbpJ0qOvk57xupH+bZRVHVngdV04WVrjaMeR1HfYlMLCiFENoKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+$("#tag-selector").selectize({
+    plugins: ["remove_button"]
+});
+</script>
+{% endblock %}
