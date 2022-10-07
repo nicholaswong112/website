@@ -14,34 +14,43 @@
 <div class="columns is-desktop">
     <div class="column is-three-fifths-desktop">
         {% block center %}
-        <h1>Blog to come...</h1>
-
-        <h2>Posts</h2>
+        {% if is_search %}
+        <h2>{{ posts|length }} search results{% if search_terms %} for "{{ search_terms }}"{% endif %}</h2>
+        {% endif %}
         <ul>
             {% for post in posts %}
             <li><a href="{% url 'post' post.slug %}">{{ post.title }}</a></li>
-            {% endfor %}
-        </ul>
-        
-        <h2>Tags</h2>
-        <ul>
-            {% for tag in tags %}
-            <li>{{ tag }}</li>
             {% endfor %}
         </ul>
         {% endblock %}
     </div>
     <div class="column search-bar">
         {% block left %}
-        <p>SEARCH BAR</p>
-        <label for="search-bar">Keywords</label>
-        <input id="search-bar" name="keywords" type="text"/>
-        <label for="tag-selector">Include these tags</label>
-        <select id="tag-selector" name="tags" multiple>
-            {% for tag in tags %}
-            <option selected value="{{ tag }}">{{ tag }}</option>
-            {% endfor %}
-        </select>
+        <form>
+            <h4>Search the blog</h4>
+            <div class="field">
+                <label for="keyword-entry" class="label">Keywords</label>
+                <div>
+                    <input id="keyword-entry" name="keywords" class="input" type="text"/>
+                </div>
+            </div>
+            <div class="field">
+                <label for="tag-selector" class="label">Include tags</label>
+                <div class="control">
+                    <select id="tag-selector" name="tags" multiple>
+                        {% for tag in all_tags %}
+                        <option {% if tag in active_tags %}selected{% endif %} 
+                                value="{{ tag }}">{{ tag }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-link is-small">Search</button>
+                </div>
+            </div>
+        </form>
         {% endblock %}
     </div>
     <div class="column">
