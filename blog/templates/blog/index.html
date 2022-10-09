@@ -11,7 +11,7 @@
 
 {% block content %}
 
-<div class="columns is-desktop">
+<div class="columns is-desktop m-1">
     <div class="column is-three-fifths-desktop">
         {% block center %}
         {% if is_search %}
@@ -24,9 +24,9 @@
         </ul>
         {% endblock %}
     </div>
-    <div class="column search-bar">
+    <div class="column search-bar m-1">
         {% block left %}
-        <form>
+        <form method="get" action="{% url 'blog' %}">
             <h4>Search the blog</h4>
             <div class="field">
                 <label for="keyword-entry" class="label">Keywords</label>
@@ -35,7 +35,11 @@
                 </div>
             </div>
             <div class="field">
-                <label for="tag-selector" class="label">Include tags</label>
+                <div class="is-inline-flex">
+                    <label for="tag-selector" class="label">Include tags</label>
+                    <button type="button" id="select-all" class="help mx-2">All</button>
+                    <button type="button" id="select-none" class="help mx-2">None</button>
+                </div>
                 <div class="control">
                     <select id="tag-selector" name="tags" multiple>
                         {% for tag in all_tags %}
@@ -47,13 +51,13 @@
             </div>
             <div class="field">
                 <div class="control">
-                    <button class="button is-link is-small">Search</button>
+                    <button class="button is-link is-small" type="submit">Search</button>
                 </div>
             </div>
         </form>
         {% endblock %}
     </div>
-    <div class="column">
+    <div class="column m-1">
         {% block right %}
         <div class="card">
             <header class="card-header">
@@ -69,7 +73,7 @@
                     <li>Reflections on what I’m reading and listening to</li>
                     <li>Maybe other things, idk what I’m doing lol</li>
                 </ul>
-                <p>Please feel free to engagein the comments! Respectfully!</p>
+                <p>Please feel free to engage in the comments! Respectfully!</p>
             </div>
         </div>
         {% endblock %}
@@ -82,8 +86,17 @@
 {{ block.super }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.14.0/js/selectize.min.js" integrity="sha512-VReIIr1tJEzBye8Elk8Dw/B2dAUZFRfxnV2wbpJ0qOvk57xupH+bZRVHVngdV04WVrjaMeR1HfYlMLCiFENoKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-$("#tag-selector").selectize({
+var $select = $("#tag-selector").selectize({
     plugins: ["remove_button"]
+});
+var selectize = $select[0].selectize;
+$("#select-all").click(function(e) {
+    {% for tag in all_tags %}
+    selectize.addItem('{{ tag }}', true)
+    {% endfor %}
+});
+$("#select-none").click(function(e) {
+    selectize.clear(true)
 });
 </script>
 {% endblock %}

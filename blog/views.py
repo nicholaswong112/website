@@ -25,18 +25,20 @@ def index(request):
     queries = request.GET
     if 'keywords' not in queries and 'tags' not in queries:
         # return everything, no filtering
+        all_tags = get_all_tags()
         context = { 
             'posts': Post.objects.all().order_by('-publish_date'), 
-            'all_tags': get_all_tags()
+            'active_tags': all_tags,
+            'all_tags': all_tags
         }
     else:
-        search_terms = queries.get('keywords') # None if missing
+        keywords = queries.get('keywords') # None if missing
         tags = queries.getlist('tags') # empty list if missing
-        posts = maybe_filtered_posts(search_terms)
+        posts = maybe_filtered_posts(keywords)
         posts = filter_by_tags(posts, tags)
         context = { 
             'is_search': True, 
-            'search_terms': search_terms, 
+            'search_terms': keywords, 
             'posts': posts.order_by('-publish_date'), 
             'active_tags': tags,
             'all_tags': get_all_tags()
@@ -48,5 +50,10 @@ def post(request, slug):
         post = Post.objects.get(slug=slug)
     except Post.DoesNotExist:
         raise Http404("Post does not exist")       
-    context = {'post': post, 'tags': get_all_tags() }
+    all_tags = get_all_tags()
+    context = {
+        'post': post, 
+        'active_tags': all_tags,
+        'all_tags': all_tags 
+    }
     return render(request, 'blog/post.html', context)
