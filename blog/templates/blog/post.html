@@ -12,7 +12,7 @@
 {% block center %}
 <h1>{{ post.title }}</h1>
 <p>{{ post.hook }}</p>
-<p>{{ post.tags }}</p>
+<p>Tags: {{ post.tags.all|join:", " }}</p>
 <p>Published {{ post.publish_date }}</p>
 <p>Last modified {{ post.latest_modified_date }}</p>
 <img src="{% static post.feature_image %}"/>

@@ -1,5 +1,19 @@
+figure.image {
+    margin: 0;
+}
+
+.post-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 5px;
+}
+
+/* Search bar is below post list for tablet and below */
 @media only screen and (min-width: 1024px) {
     .search-bar {
         order: -1;
+    }
+    .search-bar, .welcome-bar {
+        max-width: 300px;
     }
 }

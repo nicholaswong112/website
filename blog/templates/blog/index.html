@@ -12,59 +12,103 @@
 {% block content %}
 
 <div class="columns is-desktop m-1">
-    <div class="column is-three-fifths-desktop">
+    <div class="column is-one-half-desktop">
         {% block center %}
         {% if is_search %}
-        <h2>{{ posts|length }} search results{% if search_terms %} for "{{ search_terms }}"{% endif %}</h2>
+        <h2>
+            {{ posts|length }} search result{{ posts|length|pluralize }}
+            {% if search_terms %} for "{{ search_terms }}"{% endif %}
+        </h2>
         {% endif %}
-        <ul>
+        <div class="post-container">
             {% for post in posts %}
-            <li><a href="{% url 'post' post.slug %}">{{ post.title }}</a></li>
+            <div class="column">
+                <div class="card">
+                    <a href="{% url 'post' post.slug %}">
+                        <div class="card-image">
+                            <figure class="image is-flex">
+                                <img src="{% static post.feature_image %}" alt="{{ post.feature_image }}" class="is-align-items-flex-center"/>
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <p class="title">{{ post.title }}</p>
+                            <p class="subtitle">{{ post.hook }}</p>
+                            <div class="has-text-dark">{{ post.publish_date }} | {{ post.tags.all|join:", " }}</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
+
+
+        <!-- <div class="post-container columns is-multiline is-mobile">
+            {% for post in posts %}
+            <div class="column">
+                <div class="card">
+                    <a href="{% url 'post' post.slug %}">
+                        <div class="card-image">
+                            <figure class="image is-flex">
+                                TODO: sub out with smaller thumbnails
+                                <img src="{% static post.feature_image %}" alt="{{ post.feature_image }}" class="is-align-items-flex-center"/>
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <p class="title">{{ post.title }}</p>
+                            <p class="subtitle">{{ post.hook }}</p>
+                            <div class="has-text-dark">{{ post.publish_date }} | {{ post.tags.all|join:", " }}</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="column">Just for spacing</div>
+        </div> -->
         {% endblock %}
     </div>
-    <div class="column search-bar m-1">
+    <div class="column search-bar">
         {% block left %}
-        <form method="get" action="{% url 'blog' %}">
-            <h4>Search the blog</h4>
-            <div class="field">
-                <label for="keyword-entry" class="label">Keywords</label>
-                <div>
-                    <input id="keyword-entry" name="keywords" class="input" type="text"/>
+        <div class="box">
+            <form method="get" action="{% url 'blog' %}">
+                <h4>Search the blog</h4>
+                <div class="field">
+                    <label for="keyword-entry" class="label">Keywords</label>
+                    <div>
+                        <input id="keyword-entry" name="keywords" class="input" type="text"/>
+                    </div>
                 </div>
-            </div>
-            <div class="field">
-                <div class="is-inline-flex">
-                    <label for="tag-selector" class="label">Include tags</label>
-                    <button type="button" id="select-all" class="help mx-2">All</button>
-                    <button type="button" id="select-none" class="help mx-2">None</button>
+                <div class="field">
+                    <div class="is-inline-flex">
+                        <label for="tag-selector" class="label">Include tags</label>
+                        <button type="button" id="select-all" class="help mx-2">All</button>
+                        <button type="button" id="select-none" class="help mx-2">None</button>
+                    </div>
+                    <div class="control">
+                        <select id="tag-selector" name="tags" multiple>
+                            {% for tag in all_tags %}
+                            <option {% if tag in active_tags %}selected{% endif %} 
+                                    value="{{ tag }}">{{ tag }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
-                <div class="control">
-                    <select id="tag-selector" name="tags" multiple>
-                        {% for tag in all_tags %}
-                        <option {% if tag in active_tags %}selected{% endif %} 
-                                value="{{ tag }}">{{ tag }}</option>
-                        {% endfor %}
-                    </select>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-link is-small" type="submit">Search</button>
+                    </div>
                 </div>
-            </div>
-            <div class="field">
-                <div class="control">
-                    <button class="button is-link is-small" type="submit">Search</button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
         {% endblock %}
     </div>
-    <div class="column m-1">
+    <div class="column welcome-bar">
         {% block right %}
         <div class="card">
-            <header class="card-header">
-                Welcome to the blog!
-            </header>
-            <div class="card-image">
-                <img src="{% static 'TODO.png' %}"/>
+            <div class="card-content">
+                <h2>Welcome to the blog!</h2>
+            </div>
+            <div class="card-image has-text-centered">
+                    <img src="{% static 'me-and-navi.jpg' %}" class="is-rounded"/>
             </div>
             <div class="card-content">
                 <h4>Here's what you can expect here:</h4>
@@ -98,5 +142,20 @@ $("#select-all").click(function(e) {
 $("#select-none").click(function(e) {
     selectize.clear(true)
 });
+// function resizePosts() {
+//     $firstPost = $(".post-container .card").first();
+//     if ($firstPost.length) {
+//         $(".post-container .card").each(function() {
+//             console.log($(this));
+//             $(this).width($firstPost.width())
+//         })
+//     }
+// }
+// $(document).ready(resizePosts);
+// var doit;
+// $(window).resize(function() {
+//     clearTimeout(doit);
+//     doit = setTimeout(resizePosts, 100);
+// });
 </script>
 {% endblock %}

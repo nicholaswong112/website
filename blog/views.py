@@ -1,5 +1,5 @@
 from django.contrib.postgres.search import SearchVector, SearchQuery
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 # from django.db.models import Q
 
@@ -18,38 +18,31 @@ def maybe_filtered_posts(keywords):
     query = SearchQuery(keywords)
     return Post.objects.annotate(search=vector).filter(search=query)
 
-def filter_by_tags(posts, tags):
-    return posts.filter(tags__name__in=tags)
-
 def index(request):
-    queries = request.GET
-    if 'keywords' not in queries and 'tags' not in queries:
+    keywords = request.GET.get('keywords') # None if missing
+    tags = request.GET.getlist('tags') # empty list if missing
+    all_tags = get_all_tags()
+    if keywords is None and tags == []:
         # return everything, no filtering
-        all_tags = get_all_tags()
         context = { 
             'posts': Post.objects.all().order_by('-publish_date'), 
             'active_tags': all_tags,
             'all_tags': all_tags
         }
     else:
-        keywords = queries.get('keywords') # None if missing
-        tags = queries.getlist('tags') # empty list if missing
         posts = maybe_filtered_posts(keywords)
-        posts = filter_by_tags(posts, tags)
+        posts = posts.filter(tags__name__in=tags).distinct()
         context = { 
             'is_search': True, 
             'search_terms': keywords, 
             'posts': posts.order_by('-publish_date'), 
             'active_tags': tags,
-            'all_tags': get_all_tags()
+            'all_tags': all_tags
         }
     return render(request, 'blog/index.html', context)
 
 def post(request, slug):
-    try:
-        post = Post.objects.get(slug=slug)
-    except Post.DoesNotExist:
-        raise Http404("Post does not exist")       
+    post = get_object_or_404(Post, slug=slug)
     all_tags = get_all_tags()
     context = {
         'post': post, 
