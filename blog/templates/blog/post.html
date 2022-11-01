@@ -1,26 +1,25 @@
 {% extends 'blog/index.html' %}
 {% load static %}
+{% load markdownify %}
 
 {% block title %}{{ post.title }}{% endblock%}
 
 {% block head %}
 {{ block.super }}
-<meta name="description" content="TODO A post on Nick Wong's blog"/>
+<meta name="description" content="{{ post.title }}"/>
 <!-- <link rel="stylesheet" href="{% static 'blog/post.css' %}"/> -->
 {% endblock %}
 
 {% block center %}
 <h1>{{ post.title }}</h1>
-<p>{{ post.hook }}</p>
-<p>Tags: {{ post.tags.all|join:", " }}</p>
-<p>Published {{ post.publish_date }}</p>
-<p>Last modified {{ post.latest_modified_date }}</p>
+<h4>{{ post.hook }}</h4>
+<p>Tags: {{ post.tags.all|join:", " }} | Published {{ post.publish_date }} | Last modified {{ post.latest_modified_date }}</p>
 <img src="{% static post.feature_image %}"/>
-<p>{{ post.body }}</p>
+{{ post.body|markdownify }}
 {% endblock%}
 
-{% block right %}
+<!-- {% block right %}
 {{ block.super }}
 <h5>Read also: </h5>
 <p>Coming soon!</p>
-{% endblock %}
+{% endblock %} -->

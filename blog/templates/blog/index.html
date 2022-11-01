@@ -40,30 +40,6 @@
             </div>
             {% endfor %}
         </div>
-
-
-        <!-- <div class="post-container columns is-multiline is-mobile">
-            {% for post in posts %}
-            <div class="column">
-                <div class="card">
-                    <a href="{% url 'post' post.slug %}">
-                        <div class="card-image">
-                            <figure class="image is-flex">
-                                TODO: sub out with smaller thumbnails
-                                <img src="{% static post.feature_image %}" alt="{{ post.feature_image }}" class="is-align-items-flex-center"/>
-                            </figure>
-                        </div>
-                        <div class="card-content">
-                            <p class="title">{{ post.title }}</p>
-                            <p class="subtitle">{{ post.hook }}</p>
-                            <div class="has-text-dark">{{ post.publish_date }} | {{ post.tags.all|join:", " }}</div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            {% endfor %}
-            <div class="column">Just for spacing</div>
-        </div> -->
         {% endblock %}
     </div>
     <div class="column search-bar">
