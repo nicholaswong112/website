@@ -1,6 +1,8 @@
 # Website
 My personal website, find it at https://website-31gs.onrender.com!
 
+(Give it some time to load - free tier 😅)
+
 ### Technologies:
 - Django
 - Bulma
@@ -14,6 +16,7 @@ My personal website, find it at https://website-31gs.onrender.com!
 
 ### Project Structure
 `bio/`: app handling the static 'Home' and 'About' pages
+
 `blog/`: app handling the blog content, WIP
 
 ### Deployment
