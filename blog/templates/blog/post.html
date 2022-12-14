@@ -1,13 +1,14 @@
 {% extends 'blog/index.html' %}
 {% load static %}
 {% load markdownify %}
+{% load crispy_forms_tags %}
 
 {% block title %}{{ post.title }}{% endblock%}
 
 {% block head %}
 {{ block.super }}
 <meta name="description" content="{{ post.title }}"/>
-<!-- <link rel="stylesheet" href="{% static 'blog/post.css' %}"/> -->
+<link rel="stylesheet" href="{% static 'blog/post.css' %}"/>
 {% endblock %}
 
 {% block center %}
@@ -15,11 +16,25 @@
 <h4>{{ post.hook }}</h4>
 <p>Tags: {{ post.tags.all|join:", " }} | Published {{ post.publish_date }} | Last modified {{ post.latest_modified_date }}</p>
 <img src="{% static post.feature_image %}"/>
-{{ post.body|markdownify }}
-{% endblock%}
-
-<!-- {% block right %}
-{{ block.super }}
-<h5>Read also: </h5>
-<p>Coming soon!</p>
-{% endblock %} -->
+<div class="post-body">
+    {{ post.body|markdownify }}
+</div>
+<h3>{{ comments.count }} comment{{ comments.count|pluralize }}</h3>
+<div class="pl-4">
+    <form method="post" action="">
+        <h6>Leave a comment!</h6>
+        {% csrf_token %}
+        {% crispy form %}
+    </form>
+    <br/>
+    {% for comment in comments %}
+    <article class="media">
+        <div class="media-content">
+            <strong>{{ comment.name }}</strong> <small>{{ comment.created }}</small>
+            <br/>
+            {{ comment.comment }}
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% endblock %}

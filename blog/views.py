@@ -1,9 +1,9 @@
 from django.contrib.postgres.search import SearchVector, SearchQuery
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404
-# from django.db.models import Q
 
 from .models import Post, Tag
+from .forms import CommentForm
 
 # Helper for search bar tag options
 # CR-someday: cache this?
@@ -44,9 +44,22 @@ def index(request):
 def post(request, slug):
     post = get_object_or_404(Post, slug=slug)
     all_tags = get_all_tags()
+    comments = post.comment_set.all()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+
+            return redirect('post', slug=slug)
+    else:
+        form = CommentForm()
     context = {
         'post': post, 
         'active_tags': all_tags,
-        'all_tags': all_tags 
+        'all_tags': all_tags,
+        'comments': comments,
+        'form': form,
     }
     return render(request, 'blog/post.html', context)

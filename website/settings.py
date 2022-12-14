@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'bio',
     'blog',
     'markdownify.apps.MarkdownifyConfig',
+    'crispy_forms',
+    'crispy_bulma',
 ]
 
 MIDDLEWARE = [
@@ -44,7 +46,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -135,3 +137,7 @@ MARKDOWNIFY = {
         "BLEACH": False,
     },
 }
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = ('bulma',)
+
+CRISPY_TEMPLATE_PACK = 'bulma'
