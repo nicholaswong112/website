@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
     path('', include('bio.urls')),
+    path('spotify/', include('spotify.urls')),
 ]

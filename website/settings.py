@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bio',
     'blog',
+    'spotify',
     'markdownify.apps.MarkdownifyConfig',
     'crispy_forms',
     'crispy_bulma',
