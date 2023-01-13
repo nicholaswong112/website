@@ -19,13 +19,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY-SENSITIVE SETTINGS
 SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-nhz(a1v$7=bw@j6xk5905&38rr9zjkggm4-7icpx4*mb$1z(5#')
-DEBUG = 'RENDER' not in os.environ
-ALLOWED_HOSTS = []
-if 'RENDER_EXTERNAL_HOSTNAME' in os.environ:
-    ALLOWED_HOSTS.append(os.environ['RENDER_EXTERNAL_HOSTNAME'])
+if 'RENDER' in os.environ:
+    DEBUG = False
+    ALLOWED_HOSTS = [os.environ['RENDER_EXTERNAL_HOSTNAME']]
+else:
+    DEBUG = True
+    ALLOWED_HOSTS = []
 
 # Application definition
-
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.admin',
@@ -34,6 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'constance',
+    'constance.backends.database',
     'bio',
     'blog',
     'spotify',
@@ -142,3 +145,11 @@ MARKDOWNIFY = {
 CRISPY_ALLOWED_TEMPLATE_PACKS = ('bulma',)
 
 CRISPY_TEMPLATE_PACK = 'bulma'
+
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+CONSTANCE_CONFIG = {
+    'STAFF_ACCESS_TOKEN': ('', 'Access token available for everyone'),
+    'STAFF_REFRESH_TOKEN': ('', 'Refresh token available for everyone'),
+    'STAFF_EXPIRES_AT': (0., 'Timestamp for access token expiration'),
+}

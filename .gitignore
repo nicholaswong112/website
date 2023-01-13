@@ -3,3 +3,5 @@ __pycache__
 db.sqlite3
 env/
 staticfiles/
+node_modules/
+static/index-bundle.js
