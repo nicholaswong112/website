@@ -1,26 +1,17 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'base.html' %} 
+{% load static %} 
 
-{% block title %}Home{% endblock %}
+{% block title %}Spotify{% endblock %}
 
 {% block head %}
-<meta name="description" content="Spotify analytics"/>
-{% endblock %}
+<meta name="description" content="Spotify analytics" />
+<link rel="stylesheet" href="{% static 'spotify/index.css' %}" />
+{% endblock %} 
 
 {% block content %}
-
-<h1>Spotify</h1>
-<p>Access token: {{ access_token }}</p>
-<p>Refresh token: {{ refresh_token }}</p>
-{% if logged_in %}
-<p>You are logged in</p>
-<a href="{% url 'splogout' %}">Logout</a>
-<a href="{% url 'sprefresh' %}">Refresh the access token</a>
-{% else %}
-<a href="{% url 'splogin' %}">Login here</a>
-{% endif %}
-
-<div id='root'></div>
+<div id="react-root"></div>
+{{ is_staff|json_script:'is_staff' }}
+{{ user_logged_in|json_script:'user_logged_in' }}
+{{ nick_logged_in|json_script:'nick_logged_in' }}
 <script src="{% static 'index-bundle.js' %}"></script>
-
 {% endblock %}
