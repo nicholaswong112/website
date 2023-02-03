@@ -6,26 +6,25 @@ const SpotifyTrack = React.memo(({ track }) => {
   }
   const { albumImages, songName, songUrl, artists } = track;
   return (
-    <div className="columns">
+    <div className="columns spotify-track">
       <div className="column">
         <a href={songUrl}>
-          <img src={albumImages[albumImages.length - 1].url}></img>
+          {/* index 1 contains 300x300px image */}
+          <img className="album-pic" src={albumImages[1].url}></img>
         </a>
       </div>
-      <div className="column">
+      <div className="column is-three-quarters">
         <a href={songUrl}>
           <h4>{songName}</h4>
         </a>
         <ul>
-          {artists.map(({ artistName, artistUrl }, idx) => {
-            return (
-              <li key={idx}>
-                <p>
-                  <a href={artistUrl}>{artistName}</a>
-                </p>
-              </li>
-            );
-          })}
+          <p>
+            {artists
+              .map(({ artistName, artistUrl }, idx) => {
+                return <a href={artistUrl}>{artistName}</a>;
+              })
+              .reduce((prev, curr) => [prev, ", ", curr])}
+          </p>
         </ul>
       </div>
     </div>

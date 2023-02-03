@@ -3,13 +3,23 @@ import React from "react";
 const DEFAULT_IMAGE = "/static/spotify/profile_placeholder.svg";
 
 const PersonalCard = React.memo(
-  ({ nickMode, shouldShowData, IS_STAFF, profileImage, displayName }) => {
-    let src = shouldShowData ? profileImage : DEFAULT_IMAGE;
+  ({
+    nickMode,
+    shouldShowData,
+    IS_STAFF,
+    profileImage,
+    displayName,
+    profileUrl,
+  }) => {
     let bigText = <h4></h4>;
     let smallText = <p></p>;
 
     if (shouldShowData) {
-      bigText = <h4>{displayName}</h4>;
+      bigText = (
+        <h4>
+          <a href={profileUrl}>{displayName}</a>
+        </h4>
+      );
       smallText = (
         <>
           <p>
@@ -44,7 +54,13 @@ const PersonalCard = React.memo(
     return (
       <div className="columns">
         <div className="column">
-          <img className="prof-pic" src={src} />
+          {shouldShowData ? (
+            <a href={profileUrl}>
+              <img className="prof-pic" src={profileImage} />
+            </a>
+          ) : (
+            <img className="prof-pic" src={DEFAULT_IMAGE} />
+          )}
         </div>
         <div className="column">
           {bigText}

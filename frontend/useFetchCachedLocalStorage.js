@@ -1,35 +1,21 @@
 import { useState, useEffect } from "react";
 import useLocalStorageState from "use-local-storage-state";
 
-/** Hash function taken from GeeksForGeeks */
-function hash(s) {
-  let hash = 0;
-  if (s.length == 0) return hash;
-  for (i = 0; i < s.length; i++) {
-    const char = s.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash;
-  }
-  return hash.toString(16);
-}
-
 /** Custom hook for fetching data from an endpoint and caching it.
  * The data will be loaded from localStorage or initialized to null.
  *
- * hash(url + access_token) is used as a key for localStorage
+ * The caller is responsible for providing a unique key for localStorage
  *
- * returns [data, isLoading, setIsStale]
+ * returns [data, isLoading, erro, setIsStale]
  * setIsStale(true) will trigger a forced refetch
  */
 export default function useFetchCachedLocalStorage(
   url,
+  key,
   options = {},
-  transform
+  transform = (data) => data
 ) {
-  // const KEY = hash(url + accessToken);
-  // TODO: this will mean that cache will contaminate different sign-ins
-  const KEY = url;
-  const [data, setData] = useLocalStorageState(KEY, { defaultValue: null });
+  const [data, setData] = useLocalStorageState(key, { defaultValue: null });
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isStale, setStale] = useState(true);

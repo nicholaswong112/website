@@ -7,6 +7,8 @@ import PersonalCard from "./PersonalCard";
 import SpotifyTrack from "./SpotifyTrack";
 import SpotifyArtist from "./SpotifyArtist";
 
+import hash from "./hash";
+
 import useFetchCachedLocalStorage from "./useFetchCachedLocalStorage";
 const SPOTIFY_PREFIX = "https://api.spotify.com/v1";
 const NICK_PREFIX = "";
@@ -61,8 +63,6 @@ export default function App() {
     },
   };
 
-  const context = { nickMode, shouldShowData, ...CONSTANTS };
-
   /** Refer to https://developer.spotify.com/documentation/web-api/reference/#/operations/get-current-users-profile
    * for structure of JSON response */
   const transformPersonal = ({ display_name, external_urls, images }) => {
@@ -75,6 +75,7 @@ export default function App() {
   const [personalData, personalIsLoading, setPersonalStale] =
     useFetchCachedLocalStorage(
       SPOTIFY_PREFIX + PERSONAL_ENDPOINT,
+      hash(SPOTIFY_PREFIX + PERSONAL_ENDPOINT + accessToken),
       spotifyOptions,
       transformPersonal
     );
@@ -102,6 +103,7 @@ export default function App() {
   const [currentData, currentIsLoading, setCurrentStale] =
     useFetchCachedLocalStorage(
       SPOTIFY_PREFIX + CURRENTLY_ENDPOINT,
+      hash(SPOTIFY_PREFIX + CURRENTLY_ENDPOINT + accessToken),
       spotifyOptions,
       transformCurrent
     );
@@ -116,6 +118,7 @@ export default function App() {
   const [recentData, recentIsLoading, setRecentStale] =
     useFetchCachedLocalStorage(
       SPOTIFY_PREFIX + RECENTLY_ENDPOINT,
+      hash(SPOTIFY_PREFIX + RECENTLY_ENDPOINT + accessToken),
       spotifyOptions,
       transformRecent
     );
@@ -128,6 +131,7 @@ export default function App() {
   const [topTracksData, topTracksIsLoading, setTopTracksStale] =
     useFetchCachedLocalStorage(
       SPOTIFY_PREFIX + TOP_TRACKS_ENDPOINT,
+      hash(SPOTIFY_PREFIX + TOP_TRACKS_ENDPOINT + accessToken),
       spotifyOptions,
       transformTopTracks
     );
@@ -150,6 +154,7 @@ export default function App() {
   const [topArtistsData, topArtistsIsLoading, setTopArtistsStale] =
     useFetchCachedLocalStorage(
       SPOTIFY_PREFIX + TOP_ARTISTS_ENDPOINT,
+      hash(SPOTIFY_PREFIX + TOP_ARTISTS_ENDPOINT + accessToken),
       spotifyOptions,
       transformTopArtists
     );
@@ -160,16 +165,24 @@ export default function App() {
         <div className="column is-three-quarters">
           <h1>What'{nickMode ? "s Nick" : "re you"} listening to?</h1>
         </div>
-        <div className="column">
-          <button onClick={() => setNickMode(!nickMode)}>
-            {nickMode ? "Show You" : "Show Nick"}
-          </button>
-        </div>
+        {/* No "Nick mode" when logged in as admin -- init state is "You mode" */}
+        {IS_STAFF || (
+          <div className="column">
+            <button onClick={() => setNickMode(!nickMode)}>
+              {nickMode ? "Show You" : "Show Nick"}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="columns is-desktop">
         <div className="column">
-          <PersonalCard {...context} {...personalData} />
+          <PersonalCard
+            nickMode={nickMode}
+            shouldShowData={shouldShowData}
+            {...CONSTANTS}
+            {...personalData}
+          />
         </div>
         <button className="button is-rounded refresh-btn">
           Refresh - TODO
