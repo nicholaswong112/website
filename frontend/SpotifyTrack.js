@@ -1,8 +1,9 @@
 import React from "react";
+import LoadingTrack from "./LoadingTrack";
 
 const SpotifyTrack = React.memo(({ track }) => {
   if (track == null) {
-    return <></>;
+    return <LoadingTrack />;
   }
   const { albumImages, songName, songUrl, artists } = track;
   return (
@@ -21,7 +22,11 @@ const SpotifyTrack = React.memo(({ track }) => {
           <p>
             {artists
               .map(({ artistName, artistUrl }, idx) => {
-                return <a href={artistUrl}>{artistName}</a>;
+                return (
+                  <a key={idx} href={artistUrl}>
+                    {artistName}
+                  </a>
+                );
               })
               .reduce((prev, curr) => [prev, ", ", curr])}
           </p>

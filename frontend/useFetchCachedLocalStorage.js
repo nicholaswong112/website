@@ -6,14 +6,15 @@ import useLocalStorageState from "use-local-storage-state";
  *
  * The caller is responsible for providing a unique key for localStorage
  *
- * returns [data, isLoading, erro, setIsStale]
+ * returns [data, isLoading, error, setStale]
  * setIsStale(true) will trigger a forced refetch
  */
 export default function useFetchCachedLocalStorage(
   url,
   key,
-  options = {},
-  transform = (data) => data
+  /** default transform is identity fx */
+  transform = (data) => data,
+  options = {}
 ) {
   const [data, setData] = useLocalStorageState(key, { defaultValue: null });
   const [isLoading, setLoading] = useState(false);
@@ -46,6 +47,7 @@ export default function useFetchCachedLocalStorage(
         setData(transform(json));
         setError(null);
       } catch (err) {
+        setData(null); // TODO is this good to do?
         setError(err);
       } finally {
         setLoading(false);
@@ -57,5 +59,10 @@ export default function useFetchCachedLocalStorage(
     };
   }, [isStale]);
 
-  return [data, isLoading, error, setStale];
+  return {
+    data,
+    isLoading,
+    error,
+    setStale,
+  };
 }

@@ -63,7 +63,7 @@ const personalData = {
   imageUrl: "/static/me-and-navi.jpg",
   displayName: "Wick Nong",
 };
-const currentData = SAMPLE_TRACK_DATA;
+const currentData = { track: SAMPLE_TRACK_DATA, isPlaying: true };
 const recentData = [SAMPLE_TRACK_DATA, SAMPLE_TRACK_DATA, SAMPLE_TRACK_DATA];
 const topTracksData = [SAMPLE_TRACK_DATA, SAMPLE_TRACK_DATA, SAMPLE_TRACK_DATA];
 const topArtistsData = [

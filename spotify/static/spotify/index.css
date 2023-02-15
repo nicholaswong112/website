@@ -14,7 +14,7 @@
     overflow-y: scroll;
 }
 
-.spotify-track .spotify-artist {
+.spotify-track, .spotify-artist {
     width: 375px;
 }
 

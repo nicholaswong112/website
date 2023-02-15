@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useCookies } from "react-cookie";
 import useLocalStorageState from "use-local-storage-state";
 
@@ -12,11 +12,17 @@ import hash from "./hash";
 import useFetchCachedLocalStorage from "./useFetchCachedLocalStorage";
 const SPOTIFY_PREFIX = "https://api.spotify.com/v1";
 const NICK_PREFIX = "";
-const PERSONAL_ENDPOINT = "/me";
-const CURRENTLY_ENDPOINT = "/me/player/currently-playing";
-const RECENTLY_ENDPOINT = "/me/player/recently-played";
-const TOP_TRACKS_ENDPOINT = "/me/top/tracks";
-const TOP_ARTISTS_ENDPOINT = "/me/top/artists";
+const SPOTIFY_PERSONAL_ENDPOINT = SPOTIFY_PREFIX + "/me";
+const SPOTIFY_CURRENTLY_ENDPOINT =
+  SPOTIFY_PREFIX + "/me/player/currently-playing";
+const SPOTIFY_RECENTLY_ENDPOINT = SPOTIFY_PREFIX + "/me/player/recently-played";
+const SPOTIFY_TOP_TRACKS_ENDPOINT = SPOTIFY_PREFIX + "/me/top/tracks";
+const SPOTIFY_TOP_ARTISTS_ENDPOINT = SPOTIFY_PREFIX + "/me/top/artists";
+const NICK_PERSONAL_ENDPOINT = NICK_PREFIX + "/me";
+const NICK_CURRENTLY_ENDPOINT = NICK_PREFIX + "/me/player/currently-playing";
+const NICK_RECENTLY_ENDPOINT = NICK_PREFIX + "/me/player/recently-played";
+const NICK_TOP_TRACKS_ENDPOINT = NICK_PREFIX + "/me/top/tracks";
+const NICK_TOP_ARTISTS_ENDPOINT = NICK_PREFIX + "/me/top/artists";
 
 export default function App() {
   /** constants passed through by Django, see spotify/index.html */
@@ -27,16 +33,16 @@ export default function App() {
   const NICK_LOGGED_IN = JSON.parse(
     document.getElementById("nick_logged_in").textContent
   );
-  const CONSTANTS = {
-    IS_STAFF: IS_STAFF,
-    USER_LOGGED_IN: USER_LOGGED_IN,
-    NICK_LOGGED_IN: NICK_LOGGED_IN,
-  };
 
   /** Top-level state to be persisted across refreshes
-   * If admin is logged in (isStaff=True), we never use nickMode
+   * If admin is logged in (isStaff=True), we never use nickMode,
+   * the toggle is not displayed
    */
   const [nickMode, setNickMode] = useLocalStorageState(false);
+
+  if (IS_STAFF && nickMode) {
+    setNickMode(false);
+  }
 
   const shouldShowData = nickMode ? NICK_LOGGED_IN : USER_LOGGED_IN;
 
@@ -48,11 +54,11 @@ export default function App() {
    */
   const [cookies] = useCookies();
   const accessToken = cookies["access_token"];
-  const expiresAt = cookies["expires_at"];
+  // const expiresAt = cookies["expires_at"];
 
   //   if (expiresAt <= new Date().getTime() / 1000) {
-  //     // TODO: need to refresh the token at /spotify/refresh_token
-  //      // and also notify that data will be stale
+  //     // TODO: provide a "refresh_token" button
+  //      // and also notify that data is stale
   //     return;
   //   }
 
@@ -63,6 +69,10 @@ export default function App() {
     },
   };
 
+  /*************************************************
+   * Initializing many fetch-and-cache data stores *
+   *************************************************/
+
   /** Refer to https://developer.spotify.com/documentation/web-api/reference/#/operations/get-current-users-profile
    * for structure of JSON response */
   const transformPersonal = ({ display_name, external_urls, images }) => {
@@ -72,13 +82,17 @@ export default function App() {
       profileUrl: external_urls.spotify,
     };
   };
-  const [personalData, personalIsLoading, setPersonalStale] =
-    useFetchCachedLocalStorage(
-      SPOTIFY_PREFIX + PERSONAL_ENDPOINT,
-      hash(SPOTIFY_PREFIX + PERSONAL_ENDPOINT + accessToken),
-      spotifyOptions,
-      transformPersonal
-    );
+  const userPersonal = useFetchCachedLocalStorage(
+    SPOTIFY_PERSONAL_ENDPOINT,
+    hash(SPOTIFY_PERSONAL_ENDPOINT + accessToken),
+    transformPersonal,
+    spotifyOptions
+  );
+  const nickPersonal = useFetchCachedLocalStorage(
+    NICK_PERSONAL_ENDPOINT,
+    hash(NICK_PERSONAL_ENDPOINT),
+    transformPersonal
+  );
 
   const extractTrackData = (item) => {
     const {
@@ -97,16 +111,20 @@ export default function App() {
 
   /** Refer to https://developer.spotify.com/documentation/web-api/reference/#/operations/get-the-users-currently-playing-track
    * for structure of JSON response */
-  const transformCurrent = ({ item }) => {
-    return extractTrackData(item);
+  const transformCurrent = ({ item, is_playing }) => {
+    return { track: extractTrackData(item), isPlaying: is_playing };
   };
-  const [currentData, currentIsLoading, setCurrentStale] =
-    useFetchCachedLocalStorage(
-      SPOTIFY_PREFIX + CURRENTLY_ENDPOINT,
-      hash(SPOTIFY_PREFIX + CURRENTLY_ENDPOINT + accessToken),
-      spotifyOptions,
-      transformCurrent
-    );
+  const userCurrent = useFetchCachedLocalStorage(
+    SPOTIFY_CURRENTLY_ENDPOINT,
+    hash(SPOTIFY_CURRENTLY_ENDPOINT + accessToken),
+    transformCurrent,
+    spotifyOptions
+  );
+  const nickCurrent = useFetchCachedLocalStorage(
+    NICK_CURRENTLY_ENDPOINT,
+    hash(NICK_CURRENTLY_ENDPOINT + accessToken),
+    transformCurrent
+  );
 
   /** Refer to https://developer.spotify.com/documentation/web-api/reference/#/operations/get-recently-played
    * for structure of JSON response */
@@ -115,26 +133,34 @@ export default function App() {
       return extractTrackData(track);
     });
   };
-  const [recentData, recentIsLoading, setRecentStale] =
-    useFetchCachedLocalStorage(
-      SPOTIFY_PREFIX + RECENTLY_ENDPOINT,
-      hash(SPOTIFY_PREFIX + RECENTLY_ENDPOINT + accessToken),
-      spotifyOptions,
-      transformRecent
-    );
+  const userRecent = useFetchCachedLocalStorage(
+    SPOTIFY_RECENTLY_ENDPOINT,
+    hash(SPOTIFY_RECENTLY_ENDPOINT + accessToken),
+    transformRecent,
+    spotifyOptions
+  );
+  const nickRecent = useFetchCachedLocalStorage(
+    NICK_RECENTLY_ENDPOINT,
+    hash(NICK_RECENTLY_ENDPOINT + accessToken),
+    transformRecent
+  );
 
   /** Refer to https://developer.spotify.com/documentation/web-api/reference/#/operations/get-users-top-artists-and-tracks
    * for structure of JSON response */
   const transformTopTracks = ({ items }) => {
     return items.map(extractTrackData);
   };
-  const [topTracksData, topTracksIsLoading, setTopTracksStale] =
-    useFetchCachedLocalStorage(
-      SPOTIFY_PREFIX + TOP_TRACKS_ENDPOINT,
-      hash(SPOTIFY_PREFIX + TOP_TRACKS_ENDPOINT + accessToken),
-      spotifyOptions,
-      transformTopTracks
-    );
+  const userTopTracks = useFetchCachedLocalStorage(
+    SPOTIFY_TOP_TRACKS_ENDPOINT,
+    hash(SPOTIFY_TOP_TRACKS_ENDPOINT + accessToken),
+    transformTopTracks,
+    spotifyOptions
+  );
+  const nickTopTracks = useFetchCachedLocalStorage(
+    NICK_TOP_TRACKS_ENDPOINT,
+    hash(NICK_TOP_TRACKS_ENDPOINT + accessToken),
+    transformTopTracks
+  );
 
   const extractArtistData = (artist) => {
     const {
@@ -151,95 +177,164 @@ export default function App() {
   const transformTopArtists = ({ items }) => {
     return items.map(extractArtistData);
   };
-  const [topArtistsData, topArtistsIsLoading, setTopArtistsStale] =
-    useFetchCachedLocalStorage(
-      SPOTIFY_PREFIX + TOP_ARTISTS_ENDPOINT,
-      hash(SPOTIFY_PREFIX + TOP_ARTISTS_ENDPOINT + accessToken),
-      spotifyOptions,
-      transformTopArtists
-    );
+  const userTopArtists = useFetchCachedLocalStorage(
+    SPOTIFY_TOP_ARTISTS_ENDPOINT,
+    hash(SPOTIFY_TOP_ARTISTS_ENDPOINT + accessToken),
+    transformTopArtists,
+    spotifyOptions
+  );
+  const nickTopArtists = useFetchCachedLocalStorage(
+    NICK_TOP_ARTISTS_ENDPOINT,
+    hash(NICK_TOP_ARTISTS_ENDPOINT + accessToken),
+    transformTopArtists
+  );
+
+  const [personal, current, recent, topTracks, topArtists] = nickMode
+    ? [nickPersonal, nickCurrent, nickRecent, nickTopTracks, nickTopArtists]
+    : [userPersonal, userCurrent, userRecent, userTopTracks, userTopArtists];
+
+  const refreshOnClick = () => {
+    console.log("in onclick");
+    personal.setStale(true);
+    current.setStale(true);
+    recent.setStale(true);
+    topTracks.setStale(true);
+    topArtists.setStale(true);
+    console.log("finished onclick");
+  };
 
   return (
-    <div className="app">
-      <div className="columns is-desktop">
-        <div className="column is-three-quarters">
-          <h1>What'{nickMode ? "s Nick" : "re you"} listening to?</h1>
+    <React.StrictMode>
+      <div className="app">
+        <div className="columns is-desktop">
+          <div className="column is-three-quarters">
+            <h1>What'{nickMode ? "s Nick" : "re you"} listening to?</h1>
+          </div>
+          {/* No "Nick mode" when logged in as admin -- init/only state is "You mode" */}
+          {IS_STAFF || (
+            <div className="column">
+              <button onClick={() => setNickMode(!nickMode)}>
+                {nickMode ? "Show You" : "Show Nick"}
+              </button>
+            </div>
+          )}
         </div>
-        {/* No "Nick mode" when logged in as admin -- init state is "You mode" */}
-        {IS_STAFF || (
+
+        <div className="columns is-desktop">
           <div className="column">
-            <button onClick={() => setNickMode(!nickMode)}>
-              {nickMode ? "Show You" : "Show Nick"}
-            </button>
+            <PersonalCard
+              nickMode={nickMode}
+              shouldShowData={shouldShowData}
+              IS_STAFF={IS_STAFF}
+              {...personal.data}
+            />
           </div>
-        )}
-      </div>
+          <button
+            className="button is-rounded refresh-btn"
+            onClick={refreshOnClick}
+          >
+            <i className="fa fa-refresh" aria-hidden="true"></i>
+          </button>
+          <div className="column">
+            {!shouldShowData || current.isLoading || !current.data ? (
+              <>
+                <h3>Currently Playing</h3>
+                <SpotifyTrack />
+              </>
+            ) : current.error ? (
+              <>
+                <h3>Currently Playing</h3>
+                <p>An error occured: {current.error}</p>
+              </>
+            ) : current.data.isPlaying ? (
+              <>
+                <h3>Currently Playing</h3>
+                <SpotifyTrack track={current.data.track} />
+              </>
+            ) : (
+              <h3>Nothing Currently Playing</h3>
+            )}
+          </div>
+        </div>
 
-      <div className="columns is-desktop">
-        <div className="column">
-          <PersonalCard
-            nickMode={nickMode}
-            shouldShowData={shouldShowData}
-            {...CONSTANTS}
-            {...personalData}
-          />
-        </div>
-        <button className="button is-rounded refresh-btn">
-          Refresh - TODO
-        </button>
-        <div className="column">
-          <h3>Currently Playing</h3>
-          <SpotifyTrack track={currentData} />
+        <div className="columns is-desktop">
+          <div className="column">
+            <h3>Recently Played</h3>
+            {!shouldShowData || recent.isLoading || !recent.data ? (
+              <>
+                <SpotifyTrack />
+                <SpotifyTrack />
+                <SpotifyTrack />
+              </>
+            ) : recent.error ? (
+              <p>An error occured: {recent.error}</p>
+            ) : (
+              <div className="scroll-box">
+                <ol>
+                  {recent.data &&
+                    recent.data.map((data, idx) => {
+                      return (
+                        <li key={idx}>
+                          <SpotifyTrack track={data} />
+                        </li>
+                      );
+                    })}
+                </ol>
+              </div>
+            )}
+          </div>
+          <div className="column">
+            <h3>Top Tracks</h3>
+            {!shouldShowData || topTracks.isLoading || !topTracks.data ? (
+              <>
+                <SpotifyTrack />
+                <SpotifyTrack />
+                <SpotifyTrack />
+              </>
+            ) : topTracks.error ? (
+              <p>An error occured: {topTracks.error}</p>
+            ) : (
+              <div className="scroll-box">
+                <ol>
+                  {topTracks.data &&
+                    topTracks.data.map((data, idx) => {
+                      return (
+                        <li key={idx}>
+                          <SpotifyTrack track={data} />
+                        </li>
+                      );
+                    })}
+                </ol>
+              </div>
+            )}
+          </div>
+          <div className="column">
+            <h3>Top Artists</h3>
+            {!shouldShowData || topArtists.isLoading || !topArtists.data ? (
+              <>
+                <SpotifyArtist />
+                <SpotifyArtist />
+                <SpotifyArtist />
+              </>
+            ) : topArtists.error ? (
+              <p>An error occured: {topArtists.error}</p>
+            ) : (
+              <div className="scroll-box">
+                <ol>
+                  {topArtists.data &&
+                    topArtists.data.map((data, idx) => {
+                      return (
+                        <li key={idx}>
+                          <SpotifyArtist artist={data} />
+                        </li>
+                      );
+                    })}
+                </ol>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      <div className="columns is-desktop">
-        <div className="column">
-          <h3>Recently Played</h3>
-          <div className="scroll-box">
-            <ol>
-              {recentData &&
-                recentData.map((data, idx) => {
-                  return (
-                    <li key={idx}>
-                      <SpotifyTrack track={data} />
-                    </li>
-                  );
-                })}
-            </ol>
-          </div>
-        </div>
-        <div className="column">
-          <h3>Top Tracks</h3>
-          <div className="scroll-box">
-            <ol>
-              {topTracksData &&
-                topTracksData.map((data, idx) => {
-                  return (
-                    <li key={idx}>
-                      <SpotifyTrack track={data} />
-                    </li>
-                  );
-                })}
-            </ol>
-          </div>
-        </div>
-        <div className="column">
-          <h3>Top Artists</h3>
-          <div className="scroll-box">
-            <ol>
-              {topArtistsData &&
-                topArtistsData.map((data, idx) => {
-                  return (
-                    <li key={idx}>
-                      <SpotifyArtist {...data} />
-                    </li>
-                  );
-                })}
-            </ol>
-          </div>
-        </div>
-      </div>
-    </div>
+    </React.StrictMode>
   );
 }
