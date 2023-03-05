@@ -64,13 +64,12 @@ def login(request):
 
 
 def callback(request):
-    code = request.GET.get('code', None)
     state = request.GET.get('state', None)
     if state == None or state != request.session['state']:
-        error = request.GET.get('error', None)
-        print('Authorization Error: ' + error)  # TODO
+        print('Authorization Error: state mismatch')
         return redirect('spotify')
     else:
+        code = request.GET.get('code', None)
         r = requests.post('https://accounts.spotify.com/api/token',
                           data={
                               'grant_type': 'authorization_code',

@@ -25,6 +25,7 @@ const NICK_TOP_TRACKS_ENDPOINT = NICK_PREFIX + "/me/top/tracks";
 const NICK_TOP_ARTISTS_ENDPOINT = NICK_PREFIX + "/me/top/artists";
 
 export default function App() {
+  // TODO: IS THIS A SECURITY RISK? MANUALLY CHANGE DOM IS_STAFF == True
   /** constants passed through by Django, see spotify/index.html */
   const IS_STAFF = JSON.parse(document.getElementById("is_staff").textContent);
   const USER_LOGGED_IN = JSON.parse(
@@ -53,7 +54,10 @@ export default function App() {
    * result in a reload of the page
    */
   const [cookies] = useCookies();
-  const accessToken = cookies["access_token"];
+  // We set AT to "" in the case that it's undefined, prevent an
+  // issue when hashing it for storage keys
+  const accessToken = cookies["access_token"] || "";
+
   // const expiresAt = cookies["expires_at"];
 
   //   if (expiresAt <= new Date().getTime() / 1000) {
@@ -84,13 +88,13 @@ export default function App() {
   };
   const userPersonal = useFetchCachedLocalStorage(
     SPOTIFY_PERSONAL_ENDPOINT,
-    hash(SPOTIFY_PERSONAL_ENDPOINT + accessToken),
+    "personal: " + hash(accessToken),
     transformPersonal,
     spotifyOptions
   );
   const nickPersonal = useFetchCachedLocalStorage(
     NICK_PERSONAL_ENDPOINT,
-    hash(NICK_PERSONAL_ENDPOINT),
+    "personal: nick",
     transformPersonal
   );
 
@@ -116,13 +120,13 @@ export default function App() {
   };
   const userCurrent = useFetchCachedLocalStorage(
     SPOTIFY_CURRENTLY_ENDPOINT,
-    hash(SPOTIFY_CURRENTLY_ENDPOINT + accessToken),
+    "currently: " + hash(accessToken),
     transformCurrent,
     spotifyOptions
   );
   const nickCurrent = useFetchCachedLocalStorage(
     NICK_CURRENTLY_ENDPOINT,
-    hash(NICK_CURRENTLY_ENDPOINT + accessToken),
+    "currently: nick",
     transformCurrent
   );
 
@@ -135,13 +139,13 @@ export default function App() {
   };
   const userRecent = useFetchCachedLocalStorage(
     SPOTIFY_RECENTLY_ENDPOINT,
-    hash(SPOTIFY_RECENTLY_ENDPOINT + accessToken),
+    "recently: " + hash(accessToken),
     transformRecent,
     spotifyOptions
   );
   const nickRecent = useFetchCachedLocalStorage(
     NICK_RECENTLY_ENDPOINT,
-    hash(NICK_RECENTLY_ENDPOINT + accessToken),
+    "recently: nick",
     transformRecent
   );
 
@@ -152,13 +156,13 @@ export default function App() {
   };
   const userTopTracks = useFetchCachedLocalStorage(
     SPOTIFY_TOP_TRACKS_ENDPOINT,
-    hash(SPOTIFY_TOP_TRACKS_ENDPOINT + accessToken),
+    "top tracks: " + hash(accessToken),
     transformTopTracks,
     spotifyOptions
   );
   const nickTopTracks = useFetchCachedLocalStorage(
     NICK_TOP_TRACKS_ENDPOINT,
-    hash(NICK_TOP_TRACKS_ENDPOINT + accessToken),
+    "top tracks: nick",
     transformTopTracks
   );
 
@@ -179,13 +183,13 @@ export default function App() {
   };
   const userTopArtists = useFetchCachedLocalStorage(
     SPOTIFY_TOP_ARTISTS_ENDPOINT,
-    hash(SPOTIFY_TOP_ARTISTS_ENDPOINT + accessToken),
+    "top artists: " + hash(accessToken),
     transformTopArtists,
     spotifyOptions
   );
   const nickTopArtists = useFetchCachedLocalStorage(
     NICK_TOP_ARTISTS_ENDPOINT,
-    hash(NICK_TOP_ARTISTS_ENDPOINT + accessToken),
+    "top artists: nick",
     transformTopArtists
   );
 
@@ -194,13 +198,11 @@ export default function App() {
     : [userPersonal, userCurrent, userRecent, userTopTracks, userTopArtists];
 
   const refreshOnClick = () => {
-    console.log("in onclick");
-    personal.setStale(true);
-    current.setStale(true);
-    recent.setStale(true);
-    topTracks.setStale(true);
-    topArtists.setStale(true);
-    console.log("finished onclick");
+    personal.markStale();
+    current.markStale();
+    recent.markStale();
+    topTracks.markStale();
+    topArtists.markStale();
   };
 
   return (
@@ -236,7 +238,7 @@ export default function App() {
             <i className="fa fa-refresh" aria-hidden="true"></i>
           </button>
           <div className="column">
-            {!shouldShowData || current.isLoading || !current.data ? (
+            {!shouldShowData || current.isLoading ? (
               <>
                 <h3>Currently Playing</h3>
                 <SpotifyTrack />
@@ -244,15 +246,18 @@ export default function App() {
             ) : current.error ? (
               <>
                 <h3>Currently Playing</h3>
-                <p>An error occured: {current.error}</p>
+                <p>An error occured: {current.error.message}</p>
               </>
-            ) : current.data.isPlaying ? (
+            ) : current.data && current.data.isPlaying ? (
               <>
                 <h3>Currently Playing</h3>
                 <SpotifyTrack track={current.data.track} />
               </>
             ) : (
-              <h3>Nothing Currently Playing</h3>
+              <>
+                <h3>Nothing Currently Playing</h3>
+                <SpotifyTrack />
+              </>
             )}
           </div>
         </div>

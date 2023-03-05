@@ -14,6 +14,9 @@ const PersonalCard = React.memo(
     let bigText = <h4></h4>;
     let smallText = <p></p>;
 
+    /** TODO: refactor so that IS_STAFF is first conditional.
+     * Currently, "sign out" is available for non staff
+     */
     if (shouldShowData) {
       bigText = (
         <h4>

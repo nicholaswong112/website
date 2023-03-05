@@ -7,8 +7,9 @@ import useLocalStorageState from "use-local-storage-state";
  * The caller is responsible for providing a unique key for localStorage
  *
  * returns [data, isLoading, error, setStale]
- * setIsStale(true) will trigger a forced refetch
+ * markStale() will trigger a forced refetch
  */
+// TODO: refactor this to take in an object instead of positional arguments
 export default function useFetchCachedLocalStorage(
   url,
   key,
@@ -20,7 +21,7 @@ export default function useFetchCachedLocalStorage(
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isStale, setStale] = useState(true);
-  const [abort, setAbort] = useState(null);
+  const [abortController, setAbortController] = useState(null);
 
   useEffect(() => {
     if (!isStale) {
@@ -34,7 +35,7 @@ export default function useFetchCachedLocalStorage(
     }
     const abortController = new AbortController();
     const signal = abortController.signal;
-    setAbort(abortController);
+    setAbortController(abortController);
     const fetchData = async () => {
       try {
         const response = await fetch(url, { ...options, signal });
@@ -43,26 +44,35 @@ export default function useFetchCachedLocalStorage(
             `This is an HTTP error: status is ${response.status}`
           );
         }
-        const json = await response.json();
-        setData(transform(json));
+        const text = await response.text();
+        // handle case of status 200, empty response when nothing is playing
+        const json = text ? JSON.parse(text) : null;
+        setData(json ? transform(json) : null);
         setError(null);
       } catch (err) {
         setData(null); // TODO is this good to do?
         setError(err);
       } finally {
         setLoading(false);
+        setStale(false);
       }
     };
     fetchData();
     return () => {
-      abort.abort();
+      if (abortController) {
+        abortController.abort();
+      }
     };
   }, [isStale]);
+
+  function markStale() {
+    setStale(true);
+  }
 
   return {
     data,
     isLoading,
     error,
-    setStale,
+    markStale,
   };
 }

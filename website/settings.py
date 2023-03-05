@@ -18,7 +18,8 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY-SENSITIVE SETTINGS
-SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-nhz(a1v$7=bw@j6xk5905&38rr9zjkggm4-7icpx4*mb$1z(5#')
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY', default='django-insecure-nhz(a1v$7=bw@j6xk5905&38rr9zjkggm4-7icpx4*mb$1z(5#')
 if 'RENDER' in os.environ:
     DEBUG = False
     ALLOWED_HOSTS = [os.environ['RENDER_EXTERNAL_HOSTNAME']]
@@ -82,7 +83,7 @@ WSGI_APPLICATION = 'website.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://dachosenwong:localpw@localhost:5432/website', 
+        default='postgresql://dachosenwong:localpw@localhost:5432/website',
         conn_max_age=600)
 }
 
