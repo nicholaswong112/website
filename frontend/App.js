@@ -8,21 +8,34 @@ import SpotifyTrack from "./SpotifyTrack";
 import SpotifyArtist from "./SpotifyArtist";
 
 import hash from "./hash";
-
 import useFetchCachedLocalStorage from "./useFetchCachedLocalStorage";
+
 const SPOTIFY_PREFIX = "https://api.spotify.com/v1";
-const NICK_PREFIX = "";
-const SPOTIFY_PERSONAL_ENDPOINT = SPOTIFY_PREFIX + "/me";
-const SPOTIFY_CURRENTLY_ENDPOINT =
-  SPOTIFY_PREFIX + "/me/player/currently-playing";
-const SPOTIFY_RECENTLY_ENDPOINT = SPOTIFY_PREFIX + "/me/player/recently-played";
-const SPOTIFY_TOP_TRACKS_ENDPOINT = SPOTIFY_PREFIX + "/me/top/tracks";
-const SPOTIFY_TOP_ARTISTS_ENDPOINT = SPOTIFY_PREFIX + "/me/top/artists";
-const NICK_PERSONAL_ENDPOINT = NICK_PREFIX + "/me";
-const NICK_CURRENTLY_ENDPOINT = NICK_PREFIX + "/me/player/currently-playing";
-const NICK_RECENTLY_ENDPOINT = NICK_PREFIX + "/me/player/recently-played";
-const NICK_TOP_TRACKS_ENDPOINT = NICK_PREFIX + "/me/top/tracks";
-const NICK_TOP_ARTISTS_ENDPOINT = NICK_PREFIX + "/me/top/artists";
+const NICK_PREFIX = "/spotify/api";
+
+const suffixes = [
+  "/me", // personal info
+  "/me/player/currently-playing", // currently playing
+  "/me/player/recently-played", // recently played
+  "/me/top/tracks", // top tracks
+  "/me/top/artists", // top artists
+];
+
+const [
+  SPOTIFY_PERSONAL_ENDPOINT,
+  SPOTIFY_CURRENTLY_ENDPOINT,
+  SPOTIFY_RECENTLY_ENDPOINT,
+  SPOTIFY_TOP_TRACKS_ENDPOINT,
+  SPOTIFY_TOP_ARTISTS_ENDPOINT,
+] = suffixes.map((suf) => SPOTIFY_PREFIX + suf);
+
+const [
+  NICK_PERSONAL_ENDPOINT,
+  NICK_CURRENTLY_ENDPOINT,
+  NICK_RECENTLY_ENDPOINT,
+  NICK_TOP_TRACKS_ENDPOINT,
+  NICK_TOP_ARTISTS_ENDPOINT,
+] = suffixes.map((suf) => NICK_PREFIX + suf);
 
 export default function App() {
   // TODO: IS THIS A SECURITY RISK? MANUALLY CHANGE DOM IS_STAFF == True

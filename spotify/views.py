@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 import string
 import random
 import requests
@@ -138,3 +139,39 @@ def logout(request):
         constance.config.STAFF_EXPIRES_AT = 0.0
 
     return redirect('spotify')
+
+
+def api(request):
+    # if Nick isn't logged in, return nothing
+    if constance.config.STAFF_ACCESS_TOKEN == '':
+        return JsonResponse({})
+
+    # TODO: if Nick's access token has expired, refresh it
+
+    url = request.path[request.path.find('api') + 3:]
+
+    valid_urls = [
+        "/me",
+        "/me/player/currently-playing",
+        "/me/player/recently-played",
+        "/me/top/tracks",
+        "/me/top/artists",
+    ]
+
+    if url not in valid_urls:
+        return JsonResponse({})
+
+    r = requests.get('https://api.spotify.com/v1' + url,
+                     headers={
+                         'Authorization': 'Bearer ' + constance.config.STAFF_ACCESS_TOKEN,
+                         'Content-Type': 'application/json',
+                     }
+                     )
+
+    if r.status_code != 200:
+        return JsonResponse({})
+
+    try:
+        return JsonResponse(r.json())
+    except:
+        return JsonResponse({})
