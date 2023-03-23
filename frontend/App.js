@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useCookies } from "react-cookie";
 import useLocalStorageState from "use-local-storage-state";
 
@@ -197,6 +197,7 @@ export default function App() {
     ? [nickPersonal, nickCurrent, nickRecent, nickTopTracks, nickTopArtists]
     : [userPersonal, userCurrent, userRecent, userTopTracks, userTopArtists];
 
+  /** setting up manual and automatic refreshing */
   const refreshOnClick = () => {
     personal.markStale();
     current.markStale();
@@ -204,6 +205,15 @@ export default function App() {
     topTracks.markStale();
     topArtists.markStale();
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      current.markStale();
+      recent.markStale();
+    }, 15_000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <React.StrictMode>
