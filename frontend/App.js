@@ -206,6 +206,8 @@ export default function App() {
     transformTopArtists
   );
 
+  // TODO: this doesn't actually change the reference when you toggle
+  // need to dynamically return the correct one based on nickMode
   const [personal, current, recent, topTracks, topArtists] = nickMode
     ? [nickPersonal, nickCurrent, nickRecent, nickTopTracks, nickTopArtists]
     : [userPersonal, userCurrent, userRecent, userTopTracks, userTopArtists];

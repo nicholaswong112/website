@@ -43,7 +43,7 @@ def index(request):
     return response
 
 
-def setContance(access_token, refresh_token, expires_at):
+def setConstance(access_token, refresh_token, expires_at):
     constance.config.STAFF_ACCESS_TOKEN = access_token
     constance.config.STAFF_EXPIRES_AT = expires_at
     if refresh_token:
@@ -66,7 +66,7 @@ def login(request):
 
 def callback(request):
     state = request.GET.get('state', None)
-    if state == None or state != request.session['state']:
+    if state == None or 'state' not in request.session or state != request.session['state']:
         print('Authorization Error: state mismatch')
         return redirect('spotify')
     else:
@@ -94,9 +94,11 @@ def callback(request):
             request.session['expires_at'] = expires_at
 
             if request.user.is_staff:
-                setContance(access_token, refresh_token, expires_at)
+                setConstance(access_token, refresh_token, expires_at)
 
         return redirect('spotify')
+
+# refreshing will be done automatically eventually
 
 
 def refresh_token(request):
@@ -123,7 +125,8 @@ def refresh_token(request):
         request.session['expires_at'] = expires_at
 
         if request.user.is_staff:
-            setContance(access_token, None, expires_at)
+            # [None] will leave refresh_token unchanged
+            setConstance(access_token, None, expires_at)
 
     return redirect('spotify')
 
@@ -134,9 +137,7 @@ def logout(request):
             del request.session[key]
 
     if request.user.is_staff:
-        constance.config.STAFF_ACCESS_TOKEN = ''
-        constance.config.STAFF_REFRESH_TOKEN = ''
-        constance.config.STAFF_EXPIRES_AT = 0.0
+        setConstance('', '', 0.0)
 
     return redirect('spotify')
 
@@ -146,8 +147,31 @@ def api(request):
     if constance.config.STAFF_ACCESS_TOKEN == '':
         return JsonResponse({})
 
-    # TODO: if Nick's access token has expired, refresh it
+    # if Nick's access token has expired, refresh it
+    if time.time() > constance.config.STAFF_EXPIRES_AT:
+        refresh_token = constance.config.STAFF_REFRESH_TOKEN
+        r = requests.post('https://accounts.spotify.com/api/token',
+                          data={
+                              'grant_type': 'refresh_token',
+                              'refresh_token': refresh_token,
+                          },
+                          headers={
+                              'Authorization': 'Basic ' + ENCODED_CLIENT_INFO
+                          }
+                          )
 
+        if r.status_code != 200:
+            print('Error when using refresh token: ' +
+                  str(r.status_code))  # TODO
+        else:
+            data = r.json()
+
+            access_token = data['access_token']
+            expires_at = time.time() + float(data['expires_in'])
+
+            setConstance(access_token, None, expires_at)
+
+    # validate the url
     url = request.path[request.path.find('api') + 3:]
 
     valid_urls = [
