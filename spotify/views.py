@@ -11,12 +11,11 @@ from urllib.parse import urlencode
 
 if 'RENDER' in os.environ:
     CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
-    # TODO probably shouldn't hardcode the URL.. create a constants file or something
-    REDIRECT_URI = 'https://website-31gs.onrender.com/spotify/callback'
 else:
     # TODO remove this before committing
-    CLIENT_SECRET = 'c30db88935a74688ad6f738a79db08d6'
-    REDIRECT_URI = 'http://localhost:8000/spotify/callback'
+    CLIENT_SECRET = 'oops, forgot to remove this - has been rotated'
+
+REDIRECT_URI = '/spotify/callback'
 
 CLIENT_ID = '4b73799e86f6492ab514fd92b08f30b6'
 ENCODED_CLIENT_INFO = b64encode(
